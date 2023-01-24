@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import './App.css'
 
@@ -6,6 +6,7 @@ export default function App() {
   const [file, setFile] = useState()
   const [description, setDescription] = useState("")
   const [images, setImages] = useState([])
+  const fileInput = useRef(null);
 
   const fetchImages = async () => {
     const result = await axios.get('/api/images')
@@ -13,6 +14,13 @@ export default function App() {
     setImages([...result.data])
     console.log(images)
   }
+
+  const deleteImage = async (id) => {
+    const result = await axios.delete(`/api/images/${id}`)
+    console.log(result)
+    fetchImages()
+  }
+
 
   const submit = async event => {
     event.preventDefault()
@@ -27,8 +35,8 @@ export default function App() {
     console.log(newImage)
 
     fetchImages()
+    fileInput.current.value = ""
     setDescription("")
-    setFile()
   }
 
 
@@ -37,7 +45,7 @@ export default function App() {
     console.log(images)
   }, [])
 
-  
+  // <img src={`/api/${image.file_name}`} style={{maxWidth: "15rem"}}/>
 
   return (
     <div className="AppWrapper">
@@ -45,19 +53,22 @@ export default function App() {
       <form onSubmit={submit} className="form-top">
         <label htmlFor ="file">Upload Image</label>
         <input id='file'
+          ref={fileInput}
           filename={file} 
           onChange={e => setFile(e.target.files[0])} 
           type="file" 
           accept="image/*"
+
         ></input>
         <label htmlFor ="description">Description</label>
-        <textarea name="description" rows={4} cols={20} onChange={e => setDescription(e.target.value)}/>
+        <textarea name="description" rows={4} cols={20} onChange={e => setDescription(e.target.value)} value={description}/>
         <button type="submit">Submit</button>
       </form>
       <ul style={{listStyleType: "none"}}>
         { images.map(image => <li key={image.id}>
-          <img src={`/api/${image.file_name}`} style={{maxWidth: "15rem"}}/>
           <h2>{image.description}</h2>
+          <img src={image.imageURL} alt={image.description} />
+          <button onClick={() => deleteImage(image.id)}>Delete</button>
           </li>)}
       </ul>  
     </div>

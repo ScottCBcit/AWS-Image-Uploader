@@ -27,7 +27,7 @@ async function getImage(id) {
   let query = `
   SELECT * 
   FROM images
-  WHERE file_name = ?
+  WHERE id = ?
   `
 
   const [rows] = await pool.query(query, [id]);
@@ -47,3 +47,16 @@ async function addImage(filename, description) {
   return await getImage(id)
 }
 exports.addImage = addImage
+
+//delete image
+async function deleteImage(id) {
+    let query = `
+    DELETE FROM images
+    WHERE id = ?
+    `
+    const [result] = await pool.query
+    (query, [id]);
+    return result
+}
+exports.deleteImage = deleteImage
+
