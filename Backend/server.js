@@ -9,6 +9,7 @@ const upload = multer({
 });
 
 const app = express();
+app.use(express.static("dist"))
 
 // app.get("/api/images/:id",async (req, res) => {
 //   console.log("Getting image")
@@ -46,6 +47,11 @@ app.post("/api/images", upload.single("image"),async (req, res) => {
   const description = req.body.description;
   const result = await addImage(imagePath, description);
   res.send(result);
+});
+
+
+app.get('*', (req, res) => {
+  res.sendFile('dist/index.html');
 });
 
 const port = process.env.PORT || 8080;
