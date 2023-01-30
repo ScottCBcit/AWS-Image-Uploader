@@ -2,6 +2,7 @@ const express = require("express");
 const fs = require("fs");
 const multer = require("multer");
 const { getImages, addImage, getImage } = require("./database");
+const path = require('path');
 require('dotenv').config()
 
 const upload = multer({
@@ -51,7 +52,14 @@ app.post("/api/images", upload.single("image"),async (req, res) => {
 
 
 app.get('*', (req, res) => {
-  res.sendFile('dist/index.html');
+  const filePath = path.join(__dirname, 'dist', 'index.html');
+  fs.exists(filePath, (exists) => {
+    if (exists) {
+      res.sendFile(filePath);
+    } else {
+      res.status(404).send('File not found');
+    }
+  });
 });
 
 const port = process.env.PORT || 8080;
