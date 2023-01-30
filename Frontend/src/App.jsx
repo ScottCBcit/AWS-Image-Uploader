@@ -42,7 +42,6 @@ export default function App() {
 
   useEffect(() => {
     fetchImages()
-    console.log(images)
   }, [])
 
   // <img src={`/api/${image.file_name}`} style={{maxWidth: "15rem"}}/>
