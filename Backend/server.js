@@ -13,6 +13,7 @@ const upload = multer({ storage: storage })
 // const upload = multer({ dest: "images/" });
 
 const app = express();
+app.use(express.static("dist"))
 
 const generateFileName = (bytes = 32) => crypto.randomBytes(bytes).toString('hex')
 
@@ -93,6 +94,11 @@ app.delete("/api/images/:id", async (req, res) => {
   res.status(204).send()
 })
 
+
+
+app.get('*', (req, res) => {
+  res.sendFile('dist/index.html');
+});
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
